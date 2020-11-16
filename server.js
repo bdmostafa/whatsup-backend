@@ -19,6 +19,13 @@ const pusher = new Pusher({
 // Middleware
 app.use(express.json());
 
+// For security purposes
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    next();
+})
+
 // DB config
 const connection_uri = `mongodb+srv://admin:b7WJkmEQMZDv5TcO@cluster0.qlvoh.mongodb.net/whatsupDb?retryWrites=true&w=majority`;
 
