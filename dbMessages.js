@@ -7,4 +7,4 @@ const whatsupSchema = mongoose.Schema({
     received: Boolean
 });
 
-export default mongoose.model('messageContent', whatsupSchema);
+export default mongoose.model('messagecontent', whatsupSchema);
