@@ -1,6 +1,7 @@
 // Importing
 import express from "express";
 import mongoose from "mongoose";
+import cors from 'cors';
 import Messages from "./dbMessages.js";
 import Pusher from "pusher";
 
@@ -18,6 +19,7 @@ const pusher = new Pusher({
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 
 // For security purposes
 app.use((req, res, next) => {
