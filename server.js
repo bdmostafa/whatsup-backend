@@ -4,6 +4,9 @@ import mongoose from "mongoose";
 import cors from 'cors';
 import Messages from "./dbMessages.js";
 import Pusher from "pusher";
+// require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 // App config
 const app = express();
@@ -29,7 +32,7 @@ app.use((req, res, next) => {
 })
 
 // DB config
-const connection_uri = `mongodb+srv://admin:b7WJkmEQMZDv5TcO@cluster0.qlvoh.mongodb.net/whatsupDb?retryWrites=true&w=majority`;
+const connection_uri = `mongodb+srv://${process.env.DB_USER}:${process.env.USER_PASS}@cluster0.qlvoh.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 mongoose.connect(connection_uri, {
   useCreateIndex: true,
@@ -43,7 +46,7 @@ db.once("open", () => {
   console.log("DB connected");
 
   // collection from database
-  const collectionMessages = db.collection("messagecontents");
+  const collectionMessages = db.collection(process.env.DB_COLLECTION);
   const changeStream = collectionMessages.watch();
 
   changeStream.on("change", (change) => {
@@ -56,6 +59,8 @@ db.once("open", () => {
       pusher.trigger("messages", "inserted", {
         name: detailsMsg.name,
         message: detailsMsg.message,
+        timestamp: detailsMsg.timestamp,
+        received: detailsMsg.received
       });
     } else {
       console.log("Triggering Pusher Error");
@@ -77,6 +82,7 @@ app.get("/messages/sync", (req, res) => {
 
 app.post("/messages/new", (req, res) => {
   const dbMessage = req.body;
+  console.log(dbMessage)
 
   Messages.create(dbMessage, (err, data) => {
     if (err) res.status(500).send(err);
